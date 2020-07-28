@@ -8,10 +8,10 @@
 #include <Security.h>
 #include <tchar.h>
 
-static void GetLogonHoursIndices(_In_ const SYSTEMTIME *time, _In_ const TIME_ZONE_INFORMATION *tzi, _Out_ LONG *plIndexSA, _Out_ LONG *plIndexBit)
+static void GetLogonHoursIndices(_In_ const SYSTEMTIME* time, _In_ const TIME_ZONE_INFORMATION* tzi, _Out_ LONG* plIndexSA, _Out_ LONG* plIndexBit)
 {
-    LONG wIndex = (((LONG)time->wDayOfWeek * 24 + time->wHour) * 60 + time->wMinute + tzi->Bias) / 60 % (21*8);
-    *plIndexSA  = wIndex / 8,
+    LONG wIndex = (((LONG)time->wDayOfWeek * 24 + time->wHour) * 60 + time->wMinute + tzi->Bias) / 60 % (21 * 8);
+    *plIndexSA = wIndex / 8;
     *plIndexBit = wIndex % 8;
 }
 
@@ -30,7 +30,8 @@ static LPTSTR FormatMsg(_In_z_ LPCTSTR lpFormat, ...)
         &arg)) {
         va_end(arg);
         return lpBuffer;
-    } else {
+    }
+    else {
         va_end(arg);
         return NULL;
     }
@@ -49,7 +50,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     UINT uiResult;
     HANDLE hHeap = GetProcessHeap();
     LPTSTR pszADsPath;
-    IDispatch *pUserObj;
+    IDispatch* pUserObj;
     DISPID dispidUserObjectMembers[_countof(ppszUserObjectMembers)];
     VARIANT varLogonHours = { VT_EMPTY };
 
@@ -60,7 +61,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     // Get user fully qualified DN.
     for (ULONG nLength = 1024; ;) {
-        if ((pszADsPath = (LPTSTR)HeapAlloc(hHeap, 0, (nLength + _countof(pszURIPrefix) - 1)*sizeof(TCHAR))) == NULL) {
+        if ((pszADsPath = (LPTSTR)HeapAlloc(hHeap, 0, (nLength + _countof(pszURIPrefix) - 1) * sizeof(TCHAR))) == NULL) {
             uiResult = 3; // Out of memory
             goto _cleanup2;
         }
@@ -76,7 +77,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
 
     // Add LDAP URI prefix.
-    CopyMemory(pszADsPath, pszURIPrefix, (_countof(pszURIPrefix) - 1)*sizeof(TCHAR));
+    CopyMemory(pszADsPath, pszURIPrefix, (_countof(pszURIPrefix) - 1) * sizeof(TCHAR));
 
     if (FAILED(CoGetObject(pszADsPath, NULL, IID_IDispatch, (void**)&pUserObj))) {
         uiResult = 5; // Get user object failed
@@ -96,7 +97,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     if (V_VT(&varLogonHours) == VT_EMPTY) {
         uiResult = 0; // User has no logon hours defined
         goto _cleanup5;
-    } else if (V_VT(&varLogonHours) != (VT_ARRAY | VT_UI1)) {
+    }
+    else if (V_VT(&varLogonHours) != (VT_ARRAY | VT_UI1)) {
         uiResult = 7; // Invalid logon hours
         goto _cleanup5;
     }
@@ -117,7 +119,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
     if (bData & (1 << lIndexBit)) {
         uiResult = 0; // Within logon hours
-    } else {
+    }
+    else {
         uiResult = 1; // Out of logon hours
         LockWorkStation();
     }
