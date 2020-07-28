@@ -109,15 +109,15 @@
     <IntDir>$(Configuration).$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(Configuration).$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\</OutDir>
     <IntDir>$(Configuration).$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(Configuration).$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\</OutDir>
     <IntDir>$(Configuration).$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <OutDir>$(Configuration).$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\</OutDir>
     <IntDir>$(Configuration).$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
