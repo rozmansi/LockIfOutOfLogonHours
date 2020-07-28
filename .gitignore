@@ -1,0 +1,9 @@
+
+# /LockIfOutOfLogonHours/
+/LockIfOutOfLogonHours/*.user
+/LockIfOutOfLogonHours/Debug.ARM64
+/LockIfOutOfLogonHours/Debug.Win32
+/LockIfOutOfLogonHours/Debug.x64
+/LockIfOutOfLogonHours/Release.ARM64
+/LockIfOutOfLogonHours/Release.Win32
+/LockIfOutOfLogonHours/Release.x64
