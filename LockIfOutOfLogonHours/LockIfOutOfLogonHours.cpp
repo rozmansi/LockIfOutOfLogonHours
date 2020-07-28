@@ -127,19 +127,28 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         LockWorkStation();
     }
 
-    time.wMinute += 10;
-    GetLogonHoursIndices(&time, &time_zone, &lIndexSA, &lIndexBit);
+    SYSTEMTIME timeFuture = time;
+    timeFuture.wMinute += 10;
+    GetLogonHoursIndices(&timeFuture, &time_zone, &lIndexSA, &lIndexBit);
     if (FAILED(SafeArrayGetElement(V_ARRAY(&varLogonHours), &lIndexSA, &bData))) {
         uiResult = 8; // Logon hour index not found
         goto _cleanup5;
     }
     if (uiResult == 0 && !(bData & (1 << lIndexBit))) {
-        // Within logon hours now, but out of logon hours in 10 min.
+        // Within logon hours now, but out of logon hours in up to 10 minutes.
         HINSTANCE hShell32Res = LoadLibraryEx(_T("shell32.dll"), NULL, LOAD_LIBRARY_AS_IMAGE_RESOURCE);
-        LPTSTR lpTitle, lpMsgFmt, lpMsg;
-        LoadString(hInstance, IDS_WARNING_TITLE,   (LPTSTR)&lpTitle, 0);
+        LPTSTR lpTitleFmt;
+        LoadString(hInstance, IDS_WARNING_TITLE_FMT, (LPTSTR)&lpTitleFmt, 0);
+        TCHAR szDate[0x100];
+        GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &time, NULL, szDate, _countof(szDate));
+        szDate[_countof(szDate) - 1] = 0;
+        TCHAR szTime[0x100];
+        GetTimeFormat(LOCALE_USER_DEFAULT, 0, &time, NULL, szTime, _countof(szTime));
+        szTime[_countof(szTime) - 1] = 0;
+        LPTSTR lpTitle = FormatMsg(lpTitleFmt, szDate, szTime);
+        LPTSTR lpMsgFmt;
         LoadString(hInstance, IDS_WARNING_MSG_FMT, (LPTSTR)&lpMsgFmt, 0);
-        lpMsg = FormatMsg(lpMsgFmt, 70 - time.wMinute);
+        LPTSTR lpMsg = FormatMsg(lpMsgFmt, 60 - time.wMinute);
         MSGBOXPARAMS params = {
             sizeof(MSGBOXPARAMS),   // cbSize
             NULL,                   // hwndOwner
@@ -151,6 +160,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         };
         MessageBoxIndirect(&params);
         LocalFree(lpMsg);
+        LocalFree(lpTitle);
         FreeLibrary(hShell32Res);
     }
 
