@@ -1,10 +1,5 @@
-﻿//////////////////////////////////////////////////////////////////////////////
-//
-// LockIfOutOfLogonHours - Locks current session if user is out of logon hours
-//
-//  Copyright © 2015 Simon Rozman (simon@rozman.si)
-//
-//////////////////////////////////////////////////////////////////////////////
+﻿// SPDX-License-Identifier: MIT
+// Copyright © 2015-2020 Simon Rozman (simon@rozman.si)
 
 #define SECURITY_WIN32
 
